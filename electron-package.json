@@ -1,12 +1,12 @@
-
 {
   "name": "ocr-document-processing-suite",
   "version": "1.0.0",
   "description": "Professional OCR Document Processing Desktop Application",
   "main": "main.js",
   "scripts": {
+    "start": "electron .",
     "electron": "electron .",
-    "electron-dev": "NODE_ENV=development electron .",
+    "electron-dev": "cross-env NODE_ENV=development electron .",
     "build-electron": "npm run build && electron-builder",
     "dist": "electron-builder"
   },
@@ -19,7 +19,8 @@
     "files": [
       "dist/**/*",
       "main.js",
-      "package.json"
+      "package.json",
+      "index1.html"
     ],
     "mac": {
       "category": "public.app-category.productivity"
@@ -32,7 +33,11 @@
     }
   },
   "devDependencies": {
-    "electron": "^latest",
-    "electron-builder": "^latest"
-  }
+    "electron": "^25.0.0",
+    "electron-builder": "^25.0.0",
+    "cross-env": "^7.0.3"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
