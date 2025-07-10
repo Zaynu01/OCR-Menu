@@ -25,6 +25,8 @@
             padding: 2rem 1.5rem;
         }
 
+        // ... keep existing code (progress header styles)
+
         /* Progress Header Styles */
         .progress-header {
             background: white;
@@ -123,6 +125,8 @@
             font-weight: 600;
         }
 
+        // ... keep existing code (workflow status styles)
+
         /* Workflow Status Styles */
         .workflow-status {
             background: white;
@@ -187,6 +191,8 @@
         .status-blocked {
             color: #d97706;
         }
+
+        // ... keep existing code (choice cards grid and styles)
 
         /* Choice Cards Grid */
         .choices-grid {
@@ -549,6 +555,42 @@
             cursor: pointer;
         }
 
+        /* PDF Preview Styles */
+        .pdf-preview {
+            display: none;
+            position: relative;
+            width: 100%;
+            height: 150px;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            margin-top: 1rem;
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            cursor: pointer;
+        }
+
+        .pdf-preview.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .pdf-preview-content {
+            color: white;
+            text-align: center;
+        }
+
+        .pdf-icon {
+            width: 3rem;
+            height: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .pdf-text {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
         .file-name {
             margin-top: 0.5rem;
             font-size: 0.875rem;
@@ -650,13 +692,59 @@
             font-size: 1.25rem;
         }
 
+        /* Toast Notification Styles */
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        .toast.show {
+            display: flex;
+        }
+
+        .toast-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
-        }
-
-        .hidden {
-            display: none;
         }
 
         /* Responsive Design */
@@ -801,10 +889,28 @@
                         <p class="upload-text">Upload First Document</p>
                         <p class="upload-subtext">Click to browse or drag & drop<br>Supports: JPG, PNG, PDF</p>
                         <input type="file" id="file-input-1" class="file-input" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileUpload(1, this.files[0])">
+                        
+                        <!-- Image Preview -->
                         <div class="file-preview" id="preview-1">
                             <img id="preview-img-1" alt="Preview">
                             <button class="remove-file" onclick="removeFile(1, event)">×</button>
                         </div>
+                        
+                        <!-- PDF Preview -->
+                        <div class="pdf-preview" id="pdf-preview-1">
+                            <div class="pdf-preview-content">
+                                <svg class="pdf-icon" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14,2 14,8 20,8"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                    <polyline points="10,9 9,9 8,9"/>
+                                </svg>
+                                <p class="pdf-text">PDF Document</p>
+                            </div>
+                            <button class="remove-file" onclick="removeFile(1, event)">×</button>
+                        </div>
+                        
                         <div class="file-name" id="file-name-1"></div>
                     </div>
 
@@ -818,10 +924,28 @@
                         <p class="upload-text">Upload Second Document</p>
                         <p class="upload-subtext">Click to browse or drag & drop<br>Supports: JPG, PNG, PDF</p>
                         <input type="file" id="file-input-2" class="file-input" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileUpload(2, this.files[0])">
+                        
+                        <!-- Image Preview -->
                         <div class="file-preview" id="preview-2">
                             <img id="preview-img-2" alt="Preview">
                             <button class="remove-file" onclick="removeFile(2, event)">×</button>
                         </div>
+                        
+                        <!-- PDF Preview -->
+                        <div class="pdf-preview" id="pdf-preview-2">
+                            <div class="pdf-preview-content">
+                                <svg class="pdf-icon" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14,2 14,8 20,8"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                    <polyline points="10,9 9,9 8,9"/>
+                                </svg>
+                                <p class="pdf-text">PDF Document</p>
+                            </div>
+                            <button class="remove-file" onclick="removeFile(2, event)">×</button>
+                        </div>
+                        
                         <div class="file-name" id="file-name-2"></div>
                     </div>
                 </div>
@@ -842,6 +966,15 @@
                 <img id="modal-image" class="modal-image" alt="Full size preview">
                 <button class="modal-close" onclick="closeModal()">×</button>
             </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast">
+            <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 12l2 2 4-4"/>
+                <circle cx="12" cy="12" r="10"/>
+            </svg>
+            <span id="toast-message">Comparison initiated successfully!</span>
         </div>
     </div>
 
@@ -979,6 +1112,7 @@
             uploadedFiles[areaId] = file;
             const uploadArea = document.getElementById(`upload-area-${areaId}`);
             const preview = document.getElementById(`preview-${areaId}`);
+            const pdfPreview = document.getElementById(`pdf-preview-${areaId}`);
             const previewImg = document.getElementById(`preview-img-${areaId}`);
             const fileName = document.getElementById(`file-name-${areaId}`);
 
@@ -986,18 +1120,28 @@
             fileName.textContent = file.name;
 
             if (file.type.startsWith('image/')) {
+                // Hide PDF preview and show image preview
+                pdfPreview.classList.remove('active');
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     previewImg.src = e.target.result;
                     preview.classList.add('active');
-                    previewImg.onclick = () => showImageModal(e.target.result);
+                    previewImg.onclick = (event) => {
+                        event.stopPropagation();
+                        showImageModal(e.target.result);
+                    };
                 };
                 reader.readAsDataURL(file);
             } else if (file.type === 'application/pdf') {
-                // For PDF files, show a PDF icon instead of preview
-                previewImg.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE0IDJINmEyIDIgMCAwIDAtMiAydjE2YTIgMiAwIDAgMCAyIDJoMTJhMiAyIDAgMCAwIDItMlY4bC02LTZ6IiBzdHJva2U9IiNkYzI2MjYiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0iI2ZlZjJmMiIvPgo8cGF0aCBkPSJNMTQgMnY2aDYiIHN0cm9rZT0iI2RjMjYyNiIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIi8+CjwvcHN2Zz4K';
-                preview.classList.add('active');
-                previewImg.onclick = null; // PDF preview not available
+                // Hide image preview and show PDF preview
+                preview.classList.remove('active');
+                pdfPreview.classList.add('active');
+                pdfPreview.onclick = (event) => {
+                    if (event.target !== event.currentTarget.querySelector('.remove-file')) {
+                        event.stopPropagation();
+                        showToast('PDF preview not available - file ready for comparison');
+                    }
+                };
             }
 
             updateCompareButton();
@@ -1009,11 +1153,13 @@
             uploadedFiles[areaId] = null;
             const uploadArea = document.getElementById(`upload-area-${areaId}`);
             const preview = document.getElementById(`preview-${areaId}`);
+            const pdfPreview = document.getElementById(`pdf-preview-${areaId}`);
             const fileName = document.getElementById(`file-name-${areaId}`);
             const fileInput = document.getElementById(`file-input-${areaId}`);
 
             uploadArea.classList.remove('has-file');
             preview.classList.remove('active');
+            pdfPreview.classList.remove('active');
             fileName.textContent = '';
             fileInput.value = '';
 
@@ -1037,20 +1183,83 @@
             document.getElementById('image-modal').classList.remove('active');
         }
 
+        function showToast(message, duration = 3000) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOutRight 0.3s ease-out';
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    toast.style.animation = '';
+                }, 300);
+            }, duration);
+        }
+
         function compareDocuments() {
             if (!uploadedFiles[1] || !uploadedFiles[2]) {
-                alert('Please upload both documents before comparing.');
+                showToast('Please upload both documents before comparing.');
                 return;
             }
 
-            // Here you would typically send the files to your Python script
-            // For now, we'll just show a success message
-            alert('Comparison started! This would normally process the files with your Python script.');
+            // ============================================================
+            // PYTHON SCRIPT INTEGRATION SECTION
+            // ============================================================
+            // 
+            // This is where you should integrate your Python script for document comparison.
+            // 
+            // Available data:
+            // - uploadedFiles[1]: First uploaded file (File object)
+            // - uploadedFiles[2]: Second uploaded file (File object)
+            // 
+            // You can access file properties like:
+            // - uploadedFiles[1].name (filename)
+            // - uploadedFiles[1].type (MIME type)
+            // - uploadedFiles[1].size (file size in bytes)
+            //
+            // Example integration options:
+            // 
+            // Option 1: Send files to a Python backend API
+            // const formData = new FormData();
+            // formData.append('file1', uploadedFiles[1]);
+            // formData.append('file2', uploadedFiles[2]);
+            // 
+            // fetch('/api/compare-documents', {
+            //     method: 'POST',
+            //     body: formData
+            // })
+            // .then(response => response.json())
+            // .then(result => {
+            //     // Handle comparison results
+            //     console.log('Comparison result:', result);
+            //     showToast('Comparison completed successfully!');
+            // })
+            // .catch(error => {
+            //     console.error('Error:', error);
+            //     showToast('Comparison failed. Please try again.');
+            // });
+            //
+            // Option 2: Use a Python bridge (like Pyodide for client-side Python)
+            // // This would require loading Pyodide library first
+            // 
+            // Option 3: Save files and call Python script via system
+            // // This requires a local server setup
+            //
+            // Replace the code below with your actual Python integration:
+            // ============================================================
+
+            // Temporary placeholder - replace with your Python script integration
+            showToast('Comparison initiated successfully!');
             
             // Mark Views Detection as completed and return to menu
             completedChoices.push(1);
-            returnToMenu();
-            updateUI();
+            setTimeout(() => {
+                returnToMenu();
+                updateUI();
+            }, 1500);
         }
 
         // Drag and drop functionality
@@ -1265,11 +1474,13 @@
             [1, 2].forEach(areaId => {
                 const uploadArea = document.getElementById(`upload-area-${areaId}`);
                 const preview = document.getElementById(`preview-${areaId}`);
+                const pdfPreview = document.getElementById(`pdf-preview-${areaId}`);
                 const fileName = document.getElementById(`file-name-${areaId}`);
                 const fileInput = document.getElementById(`file-input-${areaId}`);
 
                 if (uploadArea) uploadArea.classList.remove('has-file');
                 if (preview) preview.classList.remove('active');
+                if (pdfPreview) pdfPreview.classList.remove('active');
                 if (fileName) fileName.textContent = '';
                 if (fileInput) fileInput.value = '';
             });
