@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OCR Document Processing Suite</title>
+    <title>Image & PDF Comparison</title>
     <style>
         * {
             margin: 0;
@@ -24,8 +23,6 @@
             margin: 0 auto;
             padding: 2rem 1.5rem;
         }
-
-        // ... keep existing code (progress header styles)
 
         /* Progress Header Styles */
         .progress-header {
@@ -125,8 +122,6 @@
             font-weight: 600;
         }
 
-        // ... keep existing code (workflow status styles)
-
         /* Workflow Status Styles */
         .workflow-status {
             background: white;
@@ -191,8 +186,6 @@
         .status-blocked {
             color: #d97706;
         }
-
-        // ... keep existing code (choice cards grid and styles)
 
         /* Choice Cards Grid */
         .choices-grid {
@@ -413,7 +406,7 @@
 
         /* Comparison Interface Styles */
         .comparison-interface {
-            display: none;
+            display: block;
         }
 
         .comparison-interface.active {
@@ -692,32 +685,146 @@
             font-size: 1.25rem;
         }
 
-        /* Toast Notification Styles */
-        .toast {
-            position: fixed;
-            top: 2rem;
-            right: 2rem;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            z-index: 1001;
+        /* Views Detection Modal Styles */
+        .views-detection-modal {
             display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1002;
             align-items: center;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            animation: slideInRight 0.3s ease-out;
+            justify-content: center;
         }
 
-        .toast.show {
+        .views-detection-modal.active {
             display: flex;
         }
 
-        .toast-icon {
-            width: 1.25rem;
-            height: 1.25rem;
+        .views-detection-content {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-subtitle {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .detection-options {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .detection-option {
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .detection-option:hover {
+            border-color: #3b82f6;
+            background: #f8fafc;
+        }
+
+        .detection-option.selected {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .option-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .option-icon svg {
+            width: 1.5rem;
+            height: 1.5rem;
+            color: white;
+        }
+
+        .option-text {
+            flex: 1;
+        }
+
+        .option-title {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.25rem;
+        }
+
+        .option-description {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 0.875rem;
+        }
+
+        .modal-btn-cancel {
+            background: white;
+            color: #6b7280;
+            border: 1px solid #d1d5db;
+        }
+
+        .modal-btn-cancel:hover {
+            background: #f9fafb;
+        }
+
+        .modal-btn-confirm {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+
+        .modal-btn-confirm:hover {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        }
+
+        .modal-btn-confirm:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
         }
 
         @keyframes slideInRight {
@@ -747,7 +854,14 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Responsive Design */
+        /* Main Menu Styles */
+        .main-menu {
+            display: none;
+        }
+
+        .main-menu.active {
+            display: block;
+        }
         @media (max-width: 768px) {
             .container { padding: 1rem; }
             .header-top { flex-direction: column; align-items: stretch; gap: 1rem; }
@@ -757,6 +871,33 @@
             .upload-grid { grid-template-columns: 1fr; gap: 1rem; }
             .comparison-header-content { flex-direction: column; align-items: stretch; }
         }
+
+        /* PowerPoint Generation Modal Styles */
+        .views-detection-modal.active {
+            display: flex;
+        }
+
+        .ppt-upload-area {
+            transition: all 0.3s ease;
+        }
+
+        .ppt-upload-area:hover {
+            background-color: #f8fafc;
+        }
+
+        .ppt-upload-area:hover .option-icon {
+            transform: scale(1.05);
+        }
+
+        .ppt-upload-item {
+            margin-bottom: 1rem;
+        }
+
+        .ppt-upload-item:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Views Detection Modal Styles */
     </style>
 </head>
 <body>
@@ -767,7 +908,7 @@
             <div class="progress-header">
                 <div class="header-top">
                     <div>
-                        <h1 class="header-title">OCR Document Processing Suite</h1>
+                        <h1 class="header-title">Image & PDF Comparison</h1>
                         <p class="header-subtitle">Professional document analysis and conversion workflow</p>
                     </div>
                     <button class="reset-btn" onclick="resetWorkflow()">
@@ -782,7 +923,7 @@
                     <div class="progress-info">
                         <div class="progress-labels">
                             <span class="progress-label">Overall Progress</span>
-                            <span class="progress-count" id="progress-text">0 of 7 completed</span>
+                            <span class="progress-count" id="progress-text">0 of 6 completed</span>
                         </div>
                         <div class="progress-bar">
                             <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
@@ -827,7 +968,7 @@
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="12" r="10"/>
                             </svg>
-                            Available (<span id="available-count">7</span>)
+                            Available (<span id="available-count">6</span>)
                         </div>
                         <div id="available-list"></div>
                     </div>
@@ -854,7 +995,7 @@
             <div class="requirements-info">
                 <h3 class="requirements-title">Workflow Requirements</h3>
                 <div class="requirements-text">
-                    <p>• PowerPoint Generation requires completion of Views Detection, Text Detection, and Image & PDF Comparison</p>
+                    <p>• PowerPoint Generation requires completion of Views Detection and Text Detection</p>
                     <p>• Convert to Excel requires completion of Excel Tables Detection</p>
                     <p>• All other choices can be executed independently</p>
                 </div>
@@ -865,19 +1006,19 @@
         <div id="comparison-interface" class="comparison-interface">
             <div class="comparison-header">
                 <div class="comparison-header-content">
-                    <button class="return-btn" onclick="returnToMenu()">
+                    <button class="return-btn" onclick="returnToUpload()">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="m12 19-7-7 7-7"/>
                             <path d="M19 12H5"/>
                         </svg>
-                        Return to Menu
+                        Return to Upload
                     </button>
-                    <h2 class="comparison-title">Views Detection - Document Comparison</h2>
+                    <h2 class="comparison-title">Image & PDF Comparison - Upload Documents</h2>
                 </div>
             </div>
 
             <div class="upload-section">
-                <h3 class="upload-title">Upload Documents for Comparison</h3>
+                <h3 class="upload-title">Upload Documents for Processing</h3>
                 <div class="upload-grid">
                     <!-- First Upload Area -->
                     <div class="upload-area" id="upload-area-1" onclick="triggerFileUpload(1)">
@@ -950,12 +1091,12 @@
                     </div>
                 </div>
 
-                <button class="compare-btn" id="compare-btn" onclick="compareDocuments()" disabled>
+                <button class="compare-btn" id="compare-btn" onclick="proceedToChoices()" disabled>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M9 12l2 2 4-4"/>
                         <circle cx="12" cy="12" r="10"/>
                     </svg>
-                    Compare Documents
+                    Proceed to Processing Options
                 </button>
             </div>
         </div>
@@ -968,11 +1109,110 @@
             </div>
         </div>
 
+        <!-- Views Detection Modal -->
+        <div id="views-detection-modal" class="views-detection-modal">
+            <div class="views-detection-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Views Detection Method</h3>
+                    <p class="modal-subtitle">Choose how you want to detect views in your documents</p>
+                </div>
+                
+                <div class="detection-options">
+                    <div class="detection-option" data-method="text" onclick="selectDetectionMethod('text')">
+                        <div class="option-icon icon-blue">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                                <path d="M8 12h8M8 16h8M8 8h2"/>
+                            </svg>
+                        </div>
+                        <div class="option-text">
+                            <div class="option-title">Detection by Text</div>
+                            <div class="option-description">Analyze document structure using text recognition and OCR</div>
+                        </div>
+                    </div>
+                    
+                    <div class="detection-option" data-method="figures" onclick="selectDetectionMethod('figures')">
+                        <div class="option-icon icon-indigo">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                                <path d="M16 14l-3-3-6 6"/>
+                            </svg>
+                        </div>
+                        <div class="option-text">
+                            <div class="option-title">Detection by Figures</div>
+                            <div class="option-description">Analyze document structure using image and figure detection</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-buttons">
+                    <button class="modal-btn modal-btn-cancel" onclick="closeViewsDetectionModal()">Cancel</button>
+                    <button class="modal-btn modal-btn-confirm" id="confirm-detection-btn" onclick="confirmDetectionMethod()" disabled>Proceed</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PowerPoint Generation Modal -->
+        <div id="powerpoint-modal" class="views-detection-modal">
+            <div class="views-detection-content" style="max-width: 600px;">
+                <div class="modal-header">
+                    <h3 class="modal-title">PowerPoint Generation</h3>
+                    <p class="modal-subtitle">Upload a PowerPoint template and Excel data file</p>
+                </div>
+                
+                <div class="ppt-upload-grid" style="display: grid; gap: 1rem; margin-bottom: 2rem;">
+                    <!-- PowerPoint Upload -->
+                    <div class="ppt-upload-item">
+                        <label style="display: block; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">PowerPoint Template (.pptx)</label>
+                        <div class="ppt-upload-area" id="ppt-upload-area" onclick="triggerPPTFileUpload('pptx')">
+                            <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; border: 2px dashed #cbd5e1; border-radius: 0.5rem; cursor: pointer; transition: all 0.3s;">
+                                <div class="option-icon icon-orange" style="width: 2.5rem; height: 2.5rem;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M2 3h20v14H2V3zm18 12V5H4v10h16zM8 21l4-4 4 4"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div style="font-weight: 500; color: #111827;">Choose PowerPoint File</div>
+                                    <div style="color: #6b7280; font-size: 0.875rem;" id="pptx-file-name">No file selected</div>
+                                </div>
+                            </div>
+                            <input type="file" id="pptx-input" accept=".pptx" style="display: none;" onchange="handlePPTFileUpload('pptx', event)">
+                        </div>
+                    </div>
+
+                    <!-- Excel Upload -->
+                    <div class="ppt-upload-item">
+                        <label style="display: block; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Excel Data File (.xlsx)</label>
+                        <div class="ppt-upload-area" id="excel-upload-area" onclick="triggerPPTFileUpload('excel')">
+                            <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; border: 2px dashed #cbd5e1; border-radius: 0.5rem; cursor: pointer; transition: all 0.3s;">
+                                <div class="option-icon icon-green" style="width: 2.5rem; height: 2.5rem;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                                        <path d="M8 12h8M8 16h8M8 8h2M14 8h2"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div style="font-weight: 500; color: #111827;">Choose Excel File</div>
+                                    <div style="color: #6b7280; font-size: 0.875rem;" id="excel-file-name">No file selected</div>
+                                </div>
+                            </div>
+                            <input type="file" id="excel-input" accept=".xlsx,.xls" style="display: none;" onchange="handlePPTFileUpload('excel', event)">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-buttons">
+                    <button class="modal-btn modal-btn-cancel" onclick="closePowerPointModal()">Cancel</button>
+                    <button class="modal-btn modal-btn-confirm" id="confirm-ppt-btn" onclick="confirmPowerPointGeneration()" disabled>Generate PowerPoint</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Toast Notification -->
         <div id="toast" class="toast">
             <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M9 12l2 2 4-4"/>
-                <circle cx="12" cy="12" r="10"/>
+                <!-- <circle cx="1" cy="1" r="10"/> -->
             </svg>
             <span id="toast-message">Comparison initiated successfully!</span>
         </div>
@@ -982,8 +1222,10 @@
         // State management
         let completedChoices = [];
         let processingChoice = null;
-        let currentView = 'menu';
+        let currentView = 'upload';
         let uploadedFiles = { 1: null, 2: null };
+        let selectedDetectionMethod = null;
+        let pptFiles = { pptx: null, excel: null };
 
         // Choice definitions
         const choices = [
@@ -1007,15 +1249,6 @@
             },
             {
                 id: 3,
-                title: "Image & PDF Comparison",
-                description: "Intelligent comparison tool for images and PDF documents",
-                icon: "file-image",
-                color: "icon-blue",
-                requirements: [],
-                category: "Analysis"
-            },
-            {
-                id: 4,
                 title: "Excel Tables Detection",
                 description: "Detect and analyze table structures in documents and images",
                 icon: "table",
@@ -1024,25 +1257,25 @@
                 category: "Detection"
             },
             {
-                id: 5,
+                id: 4,
                 title: "Convert to Excel",
                 description: "Convert detected tables into properly formatted Excel files",
                 icon: "file-spreadsheet",
                 color: "icon-green",
-                requirements: [4],
+                requirements: [3],
                 category: "Conversion"
             },
             {
-                id: 6,
+                id: 5,
                 title: "PowerPoint Generation",
                 description: "Generate professional presentations from processed data",
                 icon: "presentation",
                 color: "icon-orange",
-                requirements: [1, 2, 3],
+                requirements: [1, 2],
                 category: "Generation"
             },
             {
-                id: 7,
+                id: 6,
                 title: "Matching Tool",
                 description: "Advanced matching algorithms for document comparison (TBD)",
                 icon: "search",
@@ -1067,8 +1300,14 @@
         function isChoiceEnabled(choiceId) {
             const choice = choices.find(c => c.id === choiceId);
             if (!choice) return false;
-            return choice.requirements.every(req => completedChoices.includes(req));
+
+            const isCompleted = completedChoices.includes(choiceId);
+            const isProcessing = processingChoice === choiceId;
+            const requirementsMet = choice.requirements.every(req => completedChoices.includes(req));
+
+            return !isCompleted && !isProcessing && requirementsMet;
         }
+
 
         function getNextAvailableChoices() {
             return choices.filter(choice => {
@@ -1089,16 +1328,16 @@
         }
 
         // Navigation functions
-        function showComparisonInterface() {
-            document.getElementById('main-menu').style.display = 'none';
-            document.getElementById('comparison-interface').classList.add('active');
-            currentView = 'comparison';
+        function showChoicesMenu() {
+            document.getElementById('main-menu').classList.add('active');
+            document.getElementById('comparison-interface').style.display = 'none';
+            currentView = 'menu';
         }
 
-        function returnToMenu() {
-            document.getElementById('main-menu').style.display = 'block';
-            document.getElementById('comparison-interface').classList.remove('active');
-            currentView = 'menu';
+        function returnToUpload() {
+            document.getElementById('main-menu').classList.remove('active');
+            document.getElementById('comparison-interface').style.display = 'block';
+            currentView = 'upload';
         }
 
         // File upload functions
@@ -1172,6 +1411,21 @@
             compareBtn.disabled = !hasFiles;
         }
 
+        function proceedToChoices() {
+            if (!uploadedFiles[1] || !uploadedFiles[2]) {
+                showToast('Please upload both documents before proceeding.');
+                return;
+            }
+            
+            showToast('Documents uploaded successfully!');
+            setTimeout(() => {
+                showChoicesMenu();
+                // Show the return to upload button in the menu
+                document.querySelector('.return-btn').style.display = 'flex';
+                document.querySelector('.comparison-title').textContent = 'Image & PDF Comparison - Choose Processing Option';
+            }, 1000);
+        }
+
         function showImageModal(imageSrc) {
             const modal = document.getElementById('image-modal');
             const modalImage = document.getElementById('modal-image');
@@ -1181,6 +1435,440 @@
 
         function closeModal() {
             document.getElementById('image-modal').classList.remove('active');
+        }
+
+        // PowerPoint Generation Modal Functions
+        // function showPowerPointModal() {
+        //     document.getElementById('powerpoint-modal').classList.add('active');
+        //     pptFiles = { pptx: null, excel: null };
+        //     updatePowerPointModalButtons();
+        // }
+
+        // function closePowerPointModal() {
+        //     document.getElementById('powerpoint-modal').classList.remove('active');
+        //     pptFiles = { pptx: null, excel: null };
+        //     updatePowerPointModalButtons();
+        //     // Reset file inputs
+        //     document.getElementById('pptx-input').value = '';
+        //     document.getElementById('excel-input').value = '';
+        //     document.getElementById('pptx-file-name').textContent = 'No file selected';
+        //     document.getElementById('excel-file-name').textContent = 'No file selected';
+        // }
+
+        // function triggerPPTFileUpload(type) {
+        //     const inputId = type === 'pptx' ? 'pptx-input' : 'excel-input';
+        //     document.getElementById(inputId).click();
+        // }
+
+        // function handlePPTFileUpload(type, file) {
+        //     if (!file) return;
+            
+        //     pptFiles[type] = file;
+        //     const nameElementId = type === 'pptx' ? 'pptx-file-name' : 'excel-file-name';
+        //     document.getElementById(nameElementId).textContent = file.name;
+            
+        //     updatePowerPointModalButtons();
+        // }
+
+        // function updatePowerPointModalButtons() {
+        //     const confirmBtn = document.getElementById('confirm-ppt-btn');
+        //     confirmBtn.disabled = !pptFiles.pptx || !pptFiles.excel;
+        // }
+
+        // function confirmPowerPointGeneration() {
+        //     if (!pptFiles.pptx || !pptFiles.excel) return;
+            
+        //     closePowerPointModal();
+            
+        //     // Process PowerPoint Generation
+        //     processingChoice = 6;
+        //     updateUI();
+            
+        //     showToast('Generating PowerPoint presentation...');
+            
+        //     // Simulate processing
+        //     setTimeout(() => {
+        //         completedChoices.push(6);
+        //         processingChoice = null;
+        //         showToast('PowerPoint Generation completed successfully!');
+        //         updateUI();y
+
+        //     }, 3000);
+        // }
+        ///////////////////////////////////////////////
+        
+        // async function confirmPowerPointGeneration() { CHAT GPT
+        //     if (!pptFiles.pptx || !pptFiles.excel) return;
+
+        //     closePowerPointModal();
+
+        //     processingChoice = 6;
+        //     updateUI();
+
+        //     showToast('Uploading files and generating presentation...');
+
+        //     const formData = new FormData();
+        //     formData.append('ppt_file', pptFiles.pptx);
+        //     formData.append('excel_file', pptFiles.excel);
+
+        //     try {
+        //         const response = await fetch('http://localhost:5000/api/upload', {
+        //         method: 'POST',
+        //         body: formData
+        //         });
+
+        //         const data = await response.json();
+
+        //         if (response.ok && data.success) {
+        //         showToast('✅ PowerPoint generated!');
+        //         console.log(data);
+
+        //         // Optionally, automatically download result:
+        //         window.open(`http://localhost:5000/api/download/${data.download_token}`);
+
+        //         } else {
+        //         showToast(`❌ Error: ${data.message}`);
+        //         console.error(data);
+        //         }
+
+        //     } catch (error) {
+        //         showToast(`❌ Server error: ${error.message}`);
+        //         console.error(error);
+        //     }
+
+        //     processingChoice = null;
+        //     completedChoices.push(6);
+        //     updateUI();
+            
+        // }
+        // Configuration - Flask server URL
+        const FLASK_BASE_URL = 'http://localhost:5000';
+
+        // Global variable to store files (safe declaration)
+        window.pptFiles = window.pptFiles || { pptx: null, excel: null };
+
+        // Your existing modal functions stay the same
+        function showPowerPointModal() {
+            document.getElementById('powerpoint-modal').classList.add('active');
+            window.pptFiles = { pptx: null, excel: null };
+            updatePowerPointModalButtons();
+        }
+
+        function closePowerPointModal() {
+            document.getElementById('powerpoint-modal').classList.remove('active');
+            //window.pptFiles = { pptx: null, excel: null };
+            updatePowerPointModalButtons();
+            document.getElementById('pptx-input').value = '';
+            document.getElementById('excel-input').value = '';
+            document.getElementById('pptx-file-name').textContent = 'No file selected';
+            document.getElementById('excel-file-name').textContent = 'No file selected';
+        }
+
+        function triggerPPTFileUpload(type) {
+            const inputId = type === 'pptx' ? 'pptx-input' : 'excel-input';
+            document.getElementById(inputId).click();
+        }
+
+        // FIXED: This function needs to be called from your HTML file inputs
+        function handlePPTFileUpload(type, event) {
+            const file = event.target.files[0]; // Get the file from the event
+            if (!file) return;
+            
+            console.log(`Selected ${type} file:`, file.name, file.size, file.type); // Debug log
+            
+            window.pptFiles[type] = file;
+            const nameElementId = type === 'pptx' ? 'pptx-file-name' : 'excel-file-name';
+            document.getElementById(nameElementId).textContent = file.name;
+            
+            updatePowerPointModalButtons();
+        }
+
+        function updatePowerPointModalButtons() {
+            const confirmBtn = document.getElementById('confirm-ppt-btn');
+            confirmBtn.disabled = !window.pptFiles.pptx || !window.pptFiles.excel;
+        }
+
+        // Check if Flask server is running
+        async function checkFlaskServer() {
+            try {
+                const response = await fetch(`${FLASK_BASE_URL}/api/health`, {
+                    method: 'GET',
+                    signal: AbortSignal.timeout(5000) // 5 second timeout
+                });
+                return response.ok;
+            } catch (error) {
+                console.error('Flask server check failed:', error);
+                return false;
+            }
+        }
+
+        // FIXED: Main integration function with proper file handling
+        async function confirmPowerPointGeneration() {
+            if (!window.pptFiles.pptx || !window.pptFiles.excel) {
+                showToast('Please select both PowerPoint and Excel files', 'error');
+                return;
+            }
+            
+            closePowerPointModal();
+            
+            processingChoice = 5;
+            updateUI();
+            
+            showToast('Checking Flask server connection...');
+            
+            // Check if Flask server is running
+            const serverRunning = await checkFlaskServer();
+            if (!serverRunning) {
+                processingChoice = null;
+                showToast('Flask server is not running. Please start the Flask server first.', 'error');
+                updateUI();
+                return;
+            }
+            
+            showToast('Uploading files and processing PowerPoint...');
+            
+            try {
+                // Debug: Log file details before upload
+                console.log('Uploading files:', {
+                    pptx: { name: window.pptFiles.pptx.name, size: window.pptFiles.pptx.size, type: window.pptFiles.pptx.type },
+                    excel: { name: window.pptFiles.excel.name, size: window.pptFiles.excel.size, type: window.pptFiles.excel.type }
+                });
+                
+                // Create FormData for file upload
+                const formData = new FormData();
+                formData.append('ppt_file', window.pptFiles.pptx, window.pptFiles.pptx.name);
+                formData.append('excel_file', window.pptFiles.excel, window.pptFiles.excel.name);
+                
+                // Debug: Log FormData contents
+                console.log('FormData contents:');
+                for (let pair of formData.entries()) {
+                    console.log(pair[0], pair[1]);
+                }
+                
+                // Call Flask API
+                const response = await fetch(`${FLASK_BASE_URL}/api/upload`, {
+                    method: 'POST',
+                    body: formData
+                    // Don't set Content-Type header - let browser set it with boundary
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    console.log('Before pushing:', completedChoices);
+                    completedChoices.push(5);
+                    console.log('After pushing:', completedChoices);
+                    processingChoice = null;
+                    
+                    showToast('PowerPoint generated successfully!');
+                    
+                    // Log processing results
+                    if (result.results) {
+                        console.log('Processing results:', result.results);
+                        //showProcessingResults(result.results);
+                    }
+                    
+                    // Auto-download the file
+                    if (result.download_token) {
+                        downloadGeneratedFile(result.download_token);
+                    }
+                    
+                    updateUI();
+                } else {
+                    throw new Error(result.message || 'Processing failed');
+                }
+                
+            } catch (error) {
+                processingChoice = null;
+                showToast(`Error: ${error.message}`, 'error');
+                console.error('PowerPoint generation error:', error);
+                updateUI();
+            }
+        }
+
+        // Simple download function for browser-like behavior
+        function downloadGeneratedFile(token) {
+            try {
+                const downloadUrl = `${FLASK_BASE_URL}/api/download/${token}`;
+                
+                // Create temporary link to trigger download
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = 'modified_presentation.pptx';
+                link.style.display = 'none';
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showToast('Download started!');
+                
+            } catch (error) {
+                showToast(`Download error: ${error.message}`, 'error');
+                console.error('Download error:', error);
+            }
+        }
+
+        // Enhanced toast function
+        function showToast(message, type = 'success') {
+            // Remove existing toasts
+            const existingToasts = document.querySelectorAll('.app-toast');
+            existingToasts.forEach(toast => toast.remove());
+            
+            const toast = document.createElement('div');
+            toast.className = 'app-toast';
+            toast.textContent = message;
+            
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 25px;
+                border-radius: 6px;
+                color: white;
+                font-weight: 500;
+                z-index: 10000;
+                max-width: 400px;
+                word-wrap: break-word;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                transition: all 0.3s ease;
+                ${type === 'error' ? 'background-color: #e74c3c;' : 'background-color: #27ae60;'}
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.style.opacity = '0';
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toast.remove();
+                        }
+                    }, 300);
+                }
+            }, 5000);
+        }
+
+        // Show processing results in a modal
+        function showProcessingResults(results) {
+            const modal = document.createElement('div');
+            modal.className = 'processing-results-modal';
+            
+            modal.innerHTML = `
+                <div class="modal-backdrop" onclick="this.parentElement.remove()"></div>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Processing Results</h3>
+                        <button class="close-btn" onclick="this.parentElement.parentElement.remove()">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="results-container">
+                            ${results.map(result => {
+                                let className = 'result-item';
+                                if (result.includes('✅')) className += ' success';
+                                else if (result.includes('❌')) className += ' error';
+                                else if (result.includes('⚠️')) className += ' warning';
+                                
+                                return `<div class="${className}">${result}</div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button onclick="this.parentElement.parentElement.remove()">Close</button>
+                    </div>
+                </div>
+            `;
+            
+            // Add styles
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 10001;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Optional: Add a function to check server status on app start
+        function checkServerStatus() {
+            checkFlaskServer().then(running => {
+                if (running) {
+                    showToast('Flask server connected successfully!');
+                } else {
+                    showToast('Flask server not found. Please start the server before processing.', 'error');
+                }
+            });
+        }
+
+        // Call this when your app loads (optional)
+        document.addEventListener('DOMContentLoaded', () => {
+            // Optionally check server status on startup
+            // checkServerStatus();
+        });
+
+        //////////////////////////////////////////////
+
+        // Views Detection Modal Functions
+        function showViewsDetectionModal() {
+            document.getElementById('views-detection-modal').classList.add('active');
+            selectedDetectionMethod = null;
+            updateDetectionMethodButtons();
+        }
+
+        function closeViewsDetectionModal() {
+            document.getElementById('views-detection-modal').classList.remove('active');
+            selectedDetectionMethod = null;
+            updateDetectionMethodButtons();
+        }
+
+        function selectDetectionMethod(method) {
+            selectedDetectionMethod = method;
+            
+            // Update visual selection
+            const options = document.querySelectorAll('.detection-option');
+            options.forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            const selectedOption = document.querySelector(`[data-method="${method}"]`);
+            if (selectedOption) {
+                selectedOption.classList.add('selected');
+            }
+            
+            updateDetectionMethodButtons();
+        }
+
+        function updateDetectionMethodButtons() {
+            const confirmBtn = document.getElementById('confirm-detection-btn');
+            confirmBtn.disabled = !selectedDetectionMethod;
+        }
+
+        function confirmDetectionMethod() {
+            if (!selectedDetectionMethod) return;
+            
+            closeViewsDetectionModal();
+            
+            // Process Views Detection with the selected method
+            processingChoice = 1;
+            updateUI();
+            
+            const methodName = selectedDetectionMethod === 'text' ? 'Text Detection' : 'Figure Detection';
+            showToast(`Processing Views Detection using ${methodName}...`);
+            
+            // Simulate processing
+            setTimeout(() => {
+                completedChoices.push(1);
+                processingChoice = null;
+                showToast(`Views Detection (${methodName}) completed successfully!`);
+                updateUI();
+            }, 2000);
         }
 
         function showToast(message, duration = 3000) {
@@ -1197,69 +1885,6 @@
                     toast.style.animation = '';
                 }, 300);
             }, duration);
-        }
-
-        function compareDocuments() {
-            if (!uploadedFiles[1] || !uploadedFiles[2]) {
-                showToast('Please upload both documents before comparing.');
-                return;
-            }
-
-            // ============================================================
-            // PYTHON SCRIPT INTEGRATION SECTION
-            // ============================================================
-            // 
-            // This is where you should integrate your Python script for document comparison.
-            // 
-            // Available data:
-            // - uploadedFiles[1]: First uploaded file (File object)
-            // - uploadedFiles[2]: Second uploaded file (File object)
-            // 
-            // You can access file properties like:
-            // - uploadedFiles[1].name (filename)
-            // - uploadedFiles[1].type (MIME type)
-            // - uploadedFiles[1].size (file size in bytes)
-            //
-            // Example integration options:
-            // 
-            // Option 1: Send files to a Python backend API
-            // const formData = new FormData();
-            // formData.append('file1', uploadedFiles[1]);
-            // formData.append('file2', uploadedFiles[2]);
-            // 
-            // fetch('/api/compare-documents', {
-            //     method: 'POST',
-            //     body: formData
-            // })
-            // .then(response => response.json())
-            // .then(result => {
-            //     // Handle comparison results
-            //     console.log('Comparison result:', result);
-            //     showToast('Comparison completed successfully!');
-            // })
-            // .catch(error => {
-            //     console.error('Error:', error);
-            //     showToast('Comparison failed. Please try again.');
-            // });
-            //
-            // Option 2: Use a Python bridge (like Pyodide for client-side Python)
-            // // This would require loading Pyodide library first
-            // 
-            // Option 3: Save files and call Python script via system
-            // // This requires a local server setup
-            //
-            // Replace the code below with your actual Python integration:
-            // ============================================================
-
-            // Temporary placeholder - replace with your Python script integration
-            showToast('Comparison initiated successfully!');
-            
-            // Mark Views Detection as completed and return to menu
-            completedChoices.push(1);
-            setTimeout(() => {
-                returnToMenu();
-                updateUI();
-            }, 1500);
         }
 
         // Drag and drop functionality
@@ -1450,18 +2075,28 @@
 
             // Special handling for Views Detection (choice 1)
             if (choiceId === 1) {
-                showComparisonInterface();
+                showViewsDetectionModal();
+                return;
+            }
+
+            // Special handling for PowerPoint Generation (choice 5)
+            if (choiceId === 5) {
+                showPowerPointModal();
                 return;
             }
 
             processingChoice = choiceId;
             updateUI();
 
-            // Simulate AI processing for other choices
+            const choice = choices.find(c => c.id === choiceId);
+            showToast(`Processing ${choice.title}...`);
+
+            // Simulate AI processing for choices
             await new Promise(resolve => setTimeout(resolve, 2000));
 
             completedChoices.push(choiceId);
             processingChoice = null;
+            showToast(`${choice.title} completed successfully!`);
             updateUI();
         }
 
@@ -1469,6 +2104,8 @@
             completedChoices = [];
             processingChoice = null;
             uploadedFiles = { 1: null, 2: null };
+            selectedDetectionMethod = null;
+            pptFiles = { pptx: null, excel: null };
             
             // Reset file uploads
             [1, 2].forEach(areaId => {
@@ -1486,14 +2123,16 @@
             });
             
             updateCompareButton();
-            returnToMenu();
+            returnToUpload();
             updateUI();
         }
 
         function updateUI() {
+            console.log("update UI")
             updateProgress();
             updateWorkflowStatus();
             renderChoices();
+           
         }
 
         // Initialize
@@ -1507,6 +2146,21 @@
                     closeModal();
                 }
             });
+            
+            // Close views detection modal when clicking outside
+            document.getElementById('views-detection-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeViewsDetectionModal();
+                }
+            });
+            
+            // Close PowerPoint modal when clicking outside
+            document.getElementById('powerpoint-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closePowerPointModal();
+                }
+            });
+
         });
     </script>
 </body>
